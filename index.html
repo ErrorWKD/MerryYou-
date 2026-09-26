@@ -127,7 +127,6 @@ body{font-family:var(--serif);color:var(--ink-2);background:#8BC2E8;-webkit-font
 @keyframes signWrite{to{clip-path:inset(0 0 0 0)}}
 .intro-sign i{font-style:normal;justify-self:end}.intro-sign i+i{justify-self:start}
 .intro-sign em{font-style:normal;font-size:.9em}
-@media (prefers-reduced-motion:reduce){.intro-sign span{animation:none;clip-path:none}}
 
 @keyframes sceneTilt{0%{transform:rotateX(24deg) translateY(12px)}100%{transform:rotateX(6deg) translateY(0)}}
 @keyframes keyRise{0%{opacity:0;transform:translateY(150px) scale(.94)}40%{opacity:1}
@@ -420,7 +419,6 @@ body{font-family:var(--serif);color:var(--ink-2);background:#8BC2E8;-webkit-font
   border-top:5.5px solid currentColor}
 @keyframes cueBob{0%,100%{transform:translateY(-3px)}50%{transform:translateY(3px)}}
 .deck.scrolled .scroll-cue{opacity:0;animation:none;pointer-events:none}
-@media (prefers-reduced-motion:reduce){.scroll-cue{animation:none}}
 
 .names{font-size:clamp(20px,5.2vw,24px);color:var(--ink);letter-spacing:6px;margin:0}
 .who{display:flex;align-items:center;justify-content:center;gap:10px}
@@ -532,16 +530,6 @@ button,.pill,.acct{touch-action:manipulation}
   .cal{margin-top:16px;line-height:2.1}
 }
 
-@media (prefers-reduced-motion:reduce){
-  .deck{scroll-behavior:auto}.wash{animation:none}.sheet{transition:none}
-  .sheet::after{animation:none!important;opacity:0!important}
-  .paper::before{transition:none;animation:none}
-  .slide.on .paper::before{animation:none;display:none}
-  .slide.on .press-hint{display:none}
-  .slide.on .xfaces,.slide.on .oring{display:none}
-  .ambient i{animation:none;opacity:0}
-  #intro{display:none}
-}
 </style>
 </head>
 <body>
@@ -947,7 +935,7 @@ button,.pill,.acct{touch-action:manipulation}
   window.addEventListener('resize', setXo, { passive: true });
 
   var intro = document.getElementById('intro');
-  var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var reduce = false;   /* 절전 모드·동작 줄이기에서도 연출을 그대로 재생 */
   var deckEl = document.getElementById('deck');
   var slidesAll = deckEl.querySelectorAll('.slide');
   deckEl.addEventListener('scroll', function onScroll(){ if (deckEl.scrollTop > 24) { deckEl.classList.add('scrolled'); deckEl.removeEventListener('scroll', onScroll); } }, { passive: true });
