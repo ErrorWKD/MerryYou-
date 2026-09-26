@@ -26,7 +26,10 @@
   --latin:"Cormorant Garamond",serif;
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;height:100%;overflow-x:hidden}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;overscroll-behavior:none;
+  -webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
+.num,.copy,.body,.names,.note{user-select:text;-webkit-user-select:text}
 body{font-family:var(--serif);color:var(--ink-2);background:#8BC2E8;-webkit-font-smoothing:antialiased}
 
 /* ── 배경 : 첫 카드는 온통 하늘색, 내려갈수록 녹차색 ──
@@ -139,18 +142,18 @@ body{font-family:var(--serif);color:var(--ink-2);background:#8BC2E8;-webkit-font
 @keyframes capIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
 /* ── 슬라이드 · 편지지 카드 ── */
-.deck{position:relative;z-index:2;height:100dvh;overflow-y:scroll;
-  scroll-snap-type:y mandatory;scroll-behavior:smooth;
+.deck{position:relative;z-index:2;height:100vh;height:100svh;overflow-y:scroll;
+  scroll-snap-type:y mandatory;scroll-behavior:smooth;overscroll-behavior-y:contain;
   -webkit-overflow-scrolling:touch;scrollbar-width:none}
 .deck::-webkit-scrollbar{display:none}
 /* 카드 등장 : 인트로 후 첫 카드, 이후 스크롤로 들어오는 카드마다 아래에서 위로 떠오름 */
 .sheet{transition:transform 1.4s cubic-bezier(.22,.8,.25,1),opacity 1.1s ease}
 .slide:not(.seen) .sheet{opacity:0;transform:translateY(80px)}
-.slide{height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;
+.slide{height:100vh;height:100svh;scroll-snap-align:start;scroll-snap-stop:always;
   display:flex;align-items:center;justify-content:center;
   padding:max(18px,env(safe-area-inset-top)) clamp(16px,5vw,26px) max(18px,env(safe-area-inset-bottom))}
 
-.sheet{position:relative;width:100%;max-width:380px;height:min(84dvh,660px);
+.sheet{position:relative;width:100%;max-width:380px;height:min(84svh,660px);
   background:linear-gradient(150deg,var(--gold-1),var(--gold) 45%,rgba(201,169,97,.55));
   padding:1px;
   border-radius:10px;
@@ -474,7 +477,9 @@ body{font-family:var(--serif);color:var(--ink-2);background:#8BC2E8;-webkit-font
 .field{height:42px}
 .msg{padding:13px 15px;text-align:left;font-size:12.5px;line-height:1.9;justify-content:flex-start}
 
-.acct{width:100%;background:rgba(255,255,255,.75);border:0;
+button,.pill,.acct{touch-action:manipulation}
+.pill{min-height:44px}
+.acct{width:100%;min-height:48px;background:rgba(255,255,255,.75);border:0;
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
   padding:15px 17px;font:inherit;font-size:13px;letter-spacing:2px;color:var(--ink);
   display:flex;justify-content:space-between;align-items:center;cursor:pointer}
@@ -498,7 +503,7 @@ body{font-family:var(--serif);color:var(--ink-2);background:#8BC2E8;-webkit-font
 .hint .hint-arrow{color:var(--gold);animation:hintBounce 1.8s ease-in-out infinite}
 @keyframes hintBounce{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(4px);opacity:1}}
 
-.rail{position:fixed;right:13px;top:50%;transform:translateY(-50%);z-index:5;
+.rail{position:fixed;right:calc(13px + env(safe-area-inset-right));top:50%;transform:translateY(-50%);z-index:5;
   width:32px;height:clamp(140px,32vh,220px);display:flex;align-items:center;justify-content:center;
   cursor:pointer;touch-action:none;-webkit-tap-highlight-color:transparent}
 .rail .track{position:relative;width:2px;height:100%;background:rgba(201,169,97,.35)}
@@ -510,11 +515,21 @@ body{font-family:var(--serif);color:var(--ink-2);background:#8BC2E8;-webkit-font
 /* ── 375 / 390 / 412px 대응 : 프레임이 콘텐츠를 압박하지 않도록 ── */
 @media (max-width:412px){
   .sheet{max-width:none}
-  .paper{padding:42px 24px 34px}
+  .paper{padding:28px 22px 30px}
   .deco{inset:12px}
 }
 @media (max-width:375px){
-  .paper{padding:40px 21px 32px}
+  .paper{padding:26px 18px 28px}
+  .card-face{padding:12px}
+  .card-face .side{gap:7px}
+  .card-face .avatar{width:48px}
+  .card-face .rank{font-size:20px}
+}
+/* 화면이 짧은 기기 : 카드 높이를 조금 더 확보 */
+@media (max-height:700px){
+  .sheet{height:min(90svh,660px)}
+  .paper{padding-top:24px;padding-bottom:26px}
+  .cal{margin-top:16px;line-height:2.1}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -858,7 +873,7 @@ body{font-family:var(--serif);color:var(--ink-2);background:#8BC2E8;-webkit-font
     deck.addEventListener('scroll', function(){
       if (!queued) { queued = true; requestAnimationFrame(syncWash); }
     }, { passive: true });
-    window.addEventListener('resize', syncWash);
+    window.addEventListener('resize', syncWash, { passive: true });
     syncWash();
   }
 
@@ -929,7 +944,7 @@ body{font-family:var(--serif);color:var(--ink-2);background:#8BC2E8;-webkit-font
     });
   }
   setXo();
-  window.addEventListener('resize', setXo);
+  window.addEventListener('resize', setXo, { passive: true });
 
   var intro = document.getElementById('intro');
   var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
