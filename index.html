@@ -530,6 +530,26 @@ button,.pill,.acct{touch-action:manipulation}
   .cal{margin-top:16px;line-height:2.1}
 }
 
+
+/* ── 가벼운 오픈 연출 : 하얗게 번쩍인 뒤 내용이 드러난다 ── */
+.xfaces,.oring{display:none!important}
+.slide.on .paper::before{animation:coverFlash .8s ease forwards!important}
+@keyframes coverFlash{
+  0%{opacity:1;filter:brightness(1)}
+  22%{opacity:1;filter:brightness(2.4) saturate(0)}
+  100%{opacity:0;filter:brightness(2.4) saturate(0)}
+}
+.slide.on .press-hint{opacity:0;transition:opacity .2s ease}
+.slide.on .press-hint svg,.slide.on .press-hint path,
+.slide.on .press-hint::before,.slide.on .press-hint::after{animation:none!important}
+
+/* ── 모바일 부하 줄이기 ── */
+.pill,.acct,.edge{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+@media (max-width:480px){
+  .sheet::after{animation:none!important;opacity:0!important}   /* 금테 반짝임 */
+  .ambient i{animation:none!important;opacity:.25}              /* 떠다니는 입자 */
+  .wash{will-change:transform}
+}
 </style>
 </head>
 <body>
@@ -876,7 +896,7 @@ button,.pill,.acct{touch-action:manipulation}
     if (s.classList.contains('on')) return;
     s.classList.add('on');
     /* 오픈 연출이 끝나면 연출용 층을 걷어내 스크롤을 가볍게 */
-    setTimeout(function(){ s.classList.add('opened'); }, 3150);
+    setTimeout(function(){ s.classList.add('opened'); }, 900);
   }
   slides.forEach(function (s) {
     var sheet = s.querySelector('.sheet');
